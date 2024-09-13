@@ -37,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[80%] h-[80%] max-w-4xl">
+      <div className="bg-white p-2 md:p-6 rounded-lg shadow-lg w-[95%] md:w-[80%] h-[90%] md:h-[80%] max-w-4xl">
         <div className="flex justify-end">
           <button
             onClick={onClose}
@@ -46,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
             &times;
           </button>
         </div>
-        <div className="h-full overflow-hidden px-10">{children}</div>
+        <div className="h-full overflow-hidden px-0 md:px-10">{children}</div>
       </div>
     </div>
   );
@@ -148,20 +148,20 @@ const App = () => {
             </p>
           </div>
 
-          <div className="text-gray-500">
+          {/* <div className="text-gray-500">
             <p className="mb-4">Example Questions</p>
             <div className="flex gap-2 flex-col">
               <p className=" py-2 px-4 border rounded-lg w-fit">
                 Teach me math!
               </p>
-              {/* <p className=" py-2 px-4 border rounded-lg w-fit">
+              <p className=" py-2 px-4 border rounded-lg w-fit">
                 How to learn video editing?
               </p>
               <p className=" py-2 px-4 border rounded-lg w-fit">
                 How to be Batman
-              </p> */}
+              </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex-grow overflow-y-auto mb-4 space-y-4">
             {conversation.map((message, index) => (
@@ -173,7 +173,7 @@ const App = () => {
                        ? "" //ml-auto
                        : "bg-gray-100"
                    } 
-                max-w-[80%] whitespace-pre-wrap break-words`}
+                w-[96%] md:max-w-[80%] whitespace-pre-wrap break-words`}
               >
                 <div className="text-sm font-semibold mb-1">
                   {message.role === "user" ? (
