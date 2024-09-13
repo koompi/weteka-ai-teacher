@@ -154,12 +154,12 @@ const App = () => {
               <p className=" py-2 px-4 border rounded-lg w-fit">
                 Teach me math!
               </p>
-              <p className=" py-2 px-4 border rounded-lg w-fit">
+              {/* <p className=" py-2 px-4 border rounded-lg w-fit">
                 How to learn video editing?
               </p>
               <p className=" py-2 px-4 border rounded-lg w-fit">
                 How to be Batman
-              </p>
+              </p> */}
             </div>
           </div>
 
