@@ -37,7 +37,7 @@ const ChatMessageComponent: React.FC<ChatMessageProps> = ({
         {/* Avatar */}
         <div className="flex-shrink-0">
           {message.role === "user" ? (
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
@@ -50,7 +50,7 @@ const ChatMessageComponent: React.FC<ChatMessageProps> = ({
               </svg>
             </div>
           ) : (
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full overflow-hidden shadow-sm flex items-center justify-center">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <Image
                 src="/weteka-logo.png"
                 width={20}
@@ -150,7 +150,7 @@ const ChatMessageComponent: React.FC<ChatMessageProps> = ({
             <div className={`
               group relative border border-gray-200 p-4 rounded-2xl transition-all duration-200 hover:shadow-md
               ${message.role === 'user' 
-                ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white ml-8 shadow-sm' 
+                ? 'bg-gray-700 text-white ml-8' 
                 : 'bg-white text-gray-900 mr-8'
               }
             `}>

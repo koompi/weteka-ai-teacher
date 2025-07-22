@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Anthropic from "@anthropic-ai/sdk";
 import { ChatMessage, ChatHistory, Message, ContentBlock } from "../types";
 
@@ -9,6 +9,62 @@ export const useChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistories, setChatHistories] = useState<ChatHistory[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedConversation = localStorage.getItem('weteka-current-conversation');
+    const savedChatId = localStorage.getItem('weteka-current-chat-id');
+    const savedHistories = localStorage.getItem('weteka-chat-histories');
+    const wasLoading = sessionStorage.getItem('weteka-chat-loading') === 'true';
+
+    if (savedConversation) {
+      try {
+        setConversation(JSON.parse(savedConversation));
+      } catch (e) {
+        console.error('Error loading conversation:', e);
+      }
+    }
+
+    if (savedChatId) {
+      setCurrentChatId(savedChatId);
+    }
+
+    if (savedHistories) {
+      try {
+        setChatHistories(JSON.parse(savedHistories));
+      } catch (e) {
+        console.error('Error loading chat histories:', e);
+      }
+    }
+
+    // Restore loading state if user navigated away during API call
+    if (wasLoading) {
+      setIsLoading(true);
+      // Note: The actual API call would need to be resumed, but since we can't
+      // resume mid-flight requests, we'll just clear the loading state
+      setTimeout(() => {
+        setIsLoading(false);
+        sessionStorage.removeItem('weteka-chat-loading');
+      }, 1000);
+    }
+  }, []);
+
+  // Save to localStorage whenever conversation changes
+  useEffect(() => {
+    localStorage.setItem('weteka-current-conversation', JSON.stringify(conversation));
+  }, [conversation]);
+
+  // Save current chat ID to localStorage
+  useEffect(() => {
+    if (currentChatId) {
+      localStorage.setItem('weteka-current-chat-id', currentChatId);
+    }
+  }, [currentChatId]);
+
+  // Save chat histories to localStorage
+  useEffect(() => {
+    localStorage.setItem('weteka-chat-histories', JSON.stringify(chatHistories));
+  }, [chatHistories]);
 
   const extractTextFromMessage = (message: Message): string => {
     return message.content
@@ -62,6 +118,9 @@ export const useChat = () => {
     const newChatId = Date.now().toString();
     setCurrentChatId(newChatId);
     setConversation([]);
+    // Clear localStorage for new chat
+    localStorage.removeItem('weteka-current-conversation');
+    localStorage.setItem('weteka-current-chat-id', newChatId);
   };
 
   const switchToChat = (chatId: string) => {
@@ -69,6 +128,9 @@ export const useChat = () => {
     if (chat) {
       setCurrentChatId(chatId);
       setConversation(chat.messages);
+      // Update localStorage when switching chats
+      localStorage.setItem('weteka-current-chat-id', chatId);
+      localStorage.setItem('weteka-current-conversation', JSON.stringify(chat.messages));
     }
   };
 
@@ -101,6 +163,9 @@ export const useChat = () => {
     
     setIsLoading(true);
     setConversation(updatedConversation);
+    
+    // Store loading state for persistence during navigation
+    sessionStorage.setItem('weteka-chat-loading', 'true');
 
     const anthropic = new Anthropic({
       apiKey: apiKey,
@@ -198,6 +263,8 @@ IMPORTANT LANGUAGE PRIORITY:
       saveCurrentChat(finalConversation);
     } finally {
       setIsLoading(false);
+      // Clear loading state from session storage
+      sessionStorage.removeItem('weteka-chat-loading');
     }
   };
 

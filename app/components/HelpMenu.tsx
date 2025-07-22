@@ -12,34 +12,64 @@ const HelpMenu: React.FC<HelpMenuProps> = ({ isVisible = true }) => {
 
   const helpItems = [
     {
-      title: "សួរសំណួរ",
-      description: "អ្នកអាចសួរសំណួរអំពីមុខវិជ្ជាណាមួយ ដូចជាគណិតវិទ្យា វិទ្យាសាស្រ្ត ឬភាសា",
-      example: "ឧទាហរណ៍: \"ពន្យល់ខ្ញុំអំពីប្រភេទត្រីកោណ\""
+      title: "សួរសំណួរអប់រំ",
+      description: "ពន្យល់មុខវិជ្ជាគ្រប់ប្រភេទ ដោះស្រាយលំហាត់ និងបង្រៀនគំនិតស្មុគស្មាញ",
+      examples: [
+        "ពន្យល់ខ្ញុំអំពីប្រភេទត្រីកោណ និងរបៀបគណនាបរិមាត្រ",
+        "ដោះស្រាយសមីការ x² + 5x + 6 = 0",
+        "ពន្យល់ដំណើរការរស្មីសំយោគ",
+        "តើមនុស្សជាតិមកពីណា?"
+      ]
     },
     {
-      title: "សុំជំនួយសរសេរឯកសារ",
-      description: "ស្នើសុំជំនួយក្នុងការសរសេររបាយការណ៍ សំបុត្រ ឬឯកសារផ្សេងៗ",
-      example: "ឧទាហរណ៍: \"ជួយខ្ញុំសរសេរសំបុត្រស្នើសុំការងារ\""
+      title: "សរសេរឯកសារផ្លូវការ",
+      description: "ជួយសរសេរសំបុត្រ របាយការណ៍ និងឯកសារអាជីវកម្មគ្រប់ប្រភេទ",
+      examples: [
+        "ជួយខ្ញុំសរសេរសំបុត្រស្នើសុំការងារមុខតំណែងគ្រូបង្រៀនគណិតវិទ្យា",
+        "សរសេររបាយការណ៍ប្រចាំខែសម្រាប់ក្រុមហ៊ុនលក់ទំនិញ",
+        "បង្កើតសំណើរស្នើសុំឈប់សម្រាកមាតុភាព",
+        "ជួយសរសេរកិច្ចព្រមព្រៀងការងារ"
+      ]
     },
     {
-      title: "ស្វែងរកព័ត៌មាន",
-      description: "សួរអំពីព្រឹត្តិការណ៍ វប្បធម៌ ឬចំណេះដឹងទូទៅ",
-      example: "ឧទាហរណ៍: \"ប្រាប់ខ្ញុំអំពីប្រវត្តិសាស្រ្តកម្ពុជា\""
+      title: "កិច្ចការរដ្ឋបាល",
+      description: "ឯកសារច្បាប់ សំណើរស្នើសុំ និងទម្រង់រដ្ឋាភិបាល",
+      examples: [
+        "ជួយខ្ញុំបំពេញទម្រង់ស្នើសុំលិខិតឆ្លងដែន",
+        "សរសេរសំណើរស្នើសុំប័ណ្ណអត្តសញ្ញាណ",
+        "បង្កើតលិខិតបញ្ជាក់ការងារ",
+        "ជួយសរសេរសំណើរស្នើសុំអាជ្ញាប័ណ្ណធ្វើអាជីវកម្ម"
+      ]
     },
     {
-      title: "ដោះស្រាយបញ្ហា",
-      description: "ស្វែងរកដំណោះស្រាយសម្រាប់បញ្ហាបច្ចេកទេស ឬការងារ",
-      example: "ឧទាហរណ៍: \"របៀបដោះស្រាយបញ្ហាកុំព្យូទ័រ\""
+      title: "បកប្រែ និងកែលម្អភាសា",
+      description: "បកប្រែភាសាខ្មែរ-អង់គ្លេស និងកែតម្រូវការសរសេរ",
+      examples: [
+        "បកប្រែឃ្លានេះជាភាសាអង់គ្លេស: 'ខ្ញុំចង់រៀនភាសាអង់គ្លេស'",
+        "កែតម្រូវវេយ្យាករណ៍នៃប្រយោគនេះ",
+        "ពន្យល់ពាក្យស្មុគស្មាញនេះឱ្យងាយយល់",
+        "ជួយកែសម្រួលអត្ថបទនេះឱ្យកាន់តែល្អ"
+      ]
     },
     {
-      title: "បកប្រែភាសា",
-      description: "ស្នើសុំការបកប្រែពីភាសាខ្មែរទៅអង់គ្លេស ឬផ្ទុយមកវិញ",
-      example: "ឧទាហរណ៍: \"បកប្រែ'សួស្តី' ជាភាសាអង់គ្លេស\""
+      title: "ការសរសេរកម្មវិធី",
+      description: "ជំនួយបច្ចេកទេស ការសរសេរកូដ និងការដោះស្រាយបញ្ហា IT",
+      examples: [
+        "ជួយខ្ញុំសរសេរកម្មវិធី Python គណនាលេខកូដ",
+        "ពន្យល់របៀបប្រើ HTML និង CSS",
+        "ដោះស្រាយបញ្ហា Error នៅក្នុងកូដនេះ",
+        "រចនាទិន្នន័យមូលដ្ឋានសម្រាប់ហាងលក់កាហ្វេ"
+      ]
     },
     {
-      title: "ពន្យល់គោលគំនិត",
-      description: "ស្នើសុំការពន្យល់អំពីគោលគំនិតស្មុគស្មាញឱ្យកាន់តែងាយយល់",
-      example: "ឧទាហរណ៍: \"ពន្យល់ខ្ញុំអំពីបច្ចេកវិទ្យា AI\""
+      title: "ការរៀនសូត្រ និងស្រាវជ្រាវ",
+      description: "ស្វែងយល់ព័ត៌មាន ការវិភាគ និងការស្រាវជ្រាវលម្អិត",
+      examples: [
+        "ប្រាប់ខ្ញុំអំពីប្រវត្តិសាស្រ្តអង្គរ និងសេដ្ឋកិច្ចសម័យនោះ",
+        "ពន្យល់អំពីបញ្ហាប្រែប្រួលអាកាសធាតុ និងផលប៉ះពាល់",
+        "វិភាគគុណវិបត្តិ និងគុណសម្បត្តិនៃបច្ចេកវិទ្យាសម័យថ្មី",
+        "ស្វែងយល់អំពីសេដ្ឋកិច្ចកម្ពុជាបច្ចុប្បន្ន"
+      ]
     }
   ];
 
@@ -99,10 +129,13 @@ const HelpMenu: React.FC<HelpMenuProps> = ({ isVisible = true }) => {
                     <p className="text-gray-600 text-xs mb-3 leading-relaxed">
                       {item.description}
                     </p>
-                    <div className="bg-white border border-gray-200 rounded-lg p-3">
-                      <p className="text-xs text-blue-600 font-medium">
-                        {item.example}
-                      </p>
+                    <div className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
+                      <div className="text-xs font-medium text-gray-700 mb-2">ឧទាហរណ៍:</div>
+                      {item.examples.map((example, idx) => (
+                        <div key={idx} className="text-xs text-blue-600 bg-blue-50 p-2 rounded border-l-2 border-blue-200">
+                          "{example}"
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -116,10 +149,14 @@ const HelpMenu: React.FC<HelpMenuProps> = ({ isVisible = true }) => {
                 <div className="space-y-3">
                   <div className="bg-white rounded-lg p-3 border border-green-100">
                     <h4 className="font-medium text-green-800 text-xs mb-1">១. សួរសំណួរច្បាស់លាស់</h4>
-                    <p className="text-xs text-green-700">ផ្តល់ព័ត៌មានលម្អិត និងបរិបទច្បាស់លាស់</p>
-                    <div className="mt-2 text-xs">
-                      <span className="text-red-600">❌ មិនល្អ:</span> <span className="text-gray-600">"ជួយខ្ញុំសរសេរ"</span><br/>
-                      <span className="text-green-600">✅ ល្អ:</span> <span className="text-gray-600">"ជួយខ្ញុំសរសេរសំបុត្រស្នើសុំការងារមុខតំណែងគ្រូបង្រៀនគណិតវិទ្យា"</span>
+                    <p className="text-xs text-green-700 mb-2">ផ្តល់ព័ត៌មានលម្អិត និងបរិបទច្បាស់លាស់</p>
+                    <div className="space-y-1 text-xs">
+                      <div className="bg-red-50 p-2 rounded border-l-2 border-red-200">
+                        <span className="text-red-600 font-medium">❌ មិនល្អ:</span> <span className="text-gray-700">"ជួយខ្ញុំសរសេរ"</span>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded border-l-2 border-green-200">
+                        <span className="text-green-600 font-medium">✅ ល្អ:</span> <span className="text-gray-700">"ជួយខ្ញុំសរសេរសំបុត្រស្នើសុំការងារមុខតំណែងគ្រូបង្រៀនគណិតវិទ្យា"</span>
+                      </div>
                     </div>
                   </div>
                   

@@ -2,19 +2,32 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { useChat } from "./hooks/useChat";
 import { useUI } from "./hooks/useUI";
+import { useNavigation } from "./hooks/useNavigation";
 import Header from "./components/Header";
 import WelcomeScreen from "./components/WelcomeScreen";
 import ChatMessageComponent from "./components/ChatMessage";
 import ChatInput from "./components/ChatInput";
 import EnvDebug from "./components/EnvDebug";
 import HelpMenu from "./components/HelpMenu";
+import ChatStateIndicator from "./components/ChatStateIndicator";
 
 const App = () => {
   const [inputValue, setInputValue] = useState("");
+  const [forceShowChat, setForceShowChat] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Check if we should force show chat view on mount
+  useEffect(() => {
+    const shouldForceChat = sessionStorage.getItem('weteka-force-chat-view') === 'true';
+    if (shouldForceChat) {
+      setForceShowChat(true);
+      sessionStorage.removeItem('weteka-force-chat-view');
+    }
+  }, []);
 
   const {
     conversation,
@@ -22,6 +35,8 @@ const App = () => {
     sendMessage,
     updateMessage,
   } = useChat();
+
+  const { navigateWithCache } = useNavigation();
 
   const {
     editingMessageIndex,
@@ -74,34 +89,49 @@ const App = () => {
       {/* Main Content */}
       <div className="relative flex-1 flex flex-col min-w-0 min-h-screen">
         {/* Simple branding header for chat page */}
-        {conversation.length > 0 && (
+        {(conversation.length > 0 || forceShowChat) && (
           <div className="bg-white border-b border-gray-100">
             <div className="max-w-3xl mx-auto px-2 sm:px-6 py-3">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center">
-                  <Image
-                    src="/weteka-logo.png"
-                    width={16}
-                    height={16}
-                    alt="weteka-logo"
-                    className="w-4 h-4 invert"
-                  />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                    <Image
+                      src="/weteka-logo.png"
+                      width={16}
+                      height={16}
+                      alt="weteka-logo"
+                      className="w-4 h-4 invert"
+                    />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-800">Weteka AI</span>
                 </div>
-                <span className="text-sm font-semibold text-gray-800">Weteka AI</span>
+                <button
+                  onClick={() => navigateWithCache('/about', true)}
+                  className="text-xs text-gray-600 hover:text-blue-600 transition-colors px-3 py-1 rounded-md hover:bg-gray-50"
+                >
+                  អំពី
+                </button>
               </div>
             </div>
           </div>
         )}
 
         {/* Welcome message when no conversation */}
-        {conversation.length === 0 && (
+        {conversation.length === 0 && !forceShowChat && (
           <WelcomeScreen onSelectPrompt={setInputValue} />
         )}
 
         {/* Chat Messages */}
-        {conversation.length > 0 && (
+        {(conversation.length > 0 || forceShowChat) && (
           <div className="flex-1 overflow-y-auto px-2 sm:px-6 py-4 sm:py-8">
             <div className="max-w-3xl mx-auto space-y-4 sm:space-y-8">
+              {conversation.length === 0 && forceShowChat && (
+                <div className="text-center py-12">
+                  <div className="text-gray-500 text-sm">
+                    ការសន្ទនារបស់អ្នកបានបន្តពីមុន...
+                  </div>
+                </div>
+              )}
               {conversation.map((message, index) => (
                 <ChatMessageComponent
                   key={index}
@@ -122,7 +152,7 @@ const App = () => {
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="flex items-start space-x-2 sm:space-x-3 w-full">
-                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full overflow-hidden shadow-sm flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                       <Image
                         src="/weteka-logo.png"
                         width={20}
@@ -163,6 +193,9 @@ const App = () => {
 
         {/* Help Menu */}
         <HelpMenu />
+        
+        {/* Chat State Indicator */}
+        <ChatStateIndicator />
       </div>
     </div>
   );

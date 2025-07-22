@@ -2,12 +2,15 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useNavigation } from "../hooks/useNavigation";
 
 interface WelcomeScreenProps {
   onSelectPrompt: (prompt: string) => void;
 }
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectPrompt }) => {
+  const { navigateWithCache } = useNavigation();
   const prompts = [
     { 
       text: "ជួយខ្ញុំរៀនគណិតវិទ្យា", 
@@ -42,11 +45,22 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectPrompt }) => {
   ];
 
   return (
-    <div className="flex-1 flex items-center justify-center p-2 sm:p-8">
-      <div className="w-full max-w-2xl mx-auto">
+    <div className="flex-1 flex flex-col p-2 sm:p-8">
+      {/* Header for welcome screen */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => navigateWithCache('/about', true)}
+          className="text-xs text-gray-600 hover:text-blue-600 transition-colors px-3 py-1 rounded-md hover:bg-gray-50"
+        >
+          អំពី
+        </button>
+      </div>
+      
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-2xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
+          <div className="w-16 h-16 bg-blue-600 rounded-lg mx-auto mb-6 flex items-center justify-center">
             <Image
               src="/weteka-logo.png"
               width={32}
@@ -89,6 +103,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSelectPrompt }) => {
           <p className="text-xs text-gray-500">
             Click on any option above to start your conversation
           </p>
+        </div>
         </div>
       </div>
     </div>
