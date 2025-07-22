@@ -1,256 +1,169 @@
 "use client";
 
-import React, { ReactNode, useState } from "react";
-import Anthropic from "@anthropic-ai/sdk";
-import { Loader2 } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
-}
-
-type ContentBlock = {
-  type: string;
-  text?: string;
-  source?: string;
-  // Add other possible properties as needed
-};
-
-type Message = {
-  id: string;
-  type: string;
-  role: string;
-  content: ContentBlock[];
-  model: string;
-  stop_reason: string | null;
-  stop_sequence: string | null;
-  usage: {
-    input_tokens: number;
-    output_tokens: number;
-  };
-};
-
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-2 md:p-6 rounded-lg shadow-lg w-[95%] md:w-[80%] h-[90%] md:h-[80%] max-w-4xl">
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </div>
-        <div className="h-full overflow-hidden px-0 md:px-10">{children}</div>
-      </div>
-    </div>
-  );
-};
+import { useChat } from "./hooks/useChat";
+import { useUI } from "./hooks/useUI";
+import Header from "./components/Header";
+import WelcomeScreen from "./components/WelcomeScreen";
+import ChatMessageComponent from "./components/ChatMessage";
+import ChatInput from "./components/ChatInput";
+import EnvDebug from "./components/EnvDebug";
+import HelpMenu from "./components/HelpMenu";
 
 const App = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [conversation, setConversation] = useState<
-    { role: string; content: string }[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const {
+    conversation,
+    isLoading,
+    sendMessage,
+    updateMessage,
+  } = useChat();
+
+  const {
+    editingMessageIndex,
+    editedContent,
+    startEditing,
+    saveEditedMessage,
+    cancelEditing,
+    copyToClipboard,
+    shareToMessenger,
+    setEditedContent,
+  } = useUI();
+
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [conversation, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    setIsLoading(true);
-    setConversation((prev) => [...prev, { role: "user", content: inputValue }]);
-
-    const anthropic = new Anthropic({
-      apiKey: process.env.NEXT_PUBLIC_API_KEY,
-      dangerouslyAllowBrowser: true,
-    });
-
-    try {
-      const msg = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20240620",
-        max_tokens: 1000,
-        temperature: 0,
-        system:
-          "Answer as if you are a teacher on a learning platform called Weteka, your goal is to help students learn",
-
-        messages: [
-          ...conversation.map((msg) => ({
-            role: msg.role as "user" | "assistant",
-            content: msg.content,
-          })),
-          {
-            role: "user",
-            content: inputValue,
-          },
-        ],
-      });
-
-      // const assistantResponse = msg.content[0].text;
-      const assistantResponse = extractTextFromMessage(msg);
-      setConversation((prev) => [
-        ...prev,
-        { role: "assistant", content: assistantResponse },
-      ]);
-    } catch (error) {
-      console.error("Error fetching response:", error);
-      setConversation((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Error fetching response. Please try again.",
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-      setInputValue("");
-    }
+    const currentInput = inputValue;
+    setInputValue("");
+    await sendMessage(currentInput);
   };
 
-  const extractTextFromMessage = (message: Message): string => {
-    return message.content
-      .map((block: ContentBlock) => {
-        switch (block.type) {
-          case "text":
-            return block.text || "";
-          case "image":
-            return "[Image]"; // Or handle image blocks as needed
-          default:
-            return "";
-        }
-      })
-      .join("\n");
+
+  const handleSaveEditedMessage = () => {
+    const result = saveEditedMessage();
+    if (result.index !== null) {
+      updateMessage(result.index, result.content);
+    }
+    cancelEditing();
   };
 
   return (
-    <div className="relative">
-      <button
-        onClick={openModal}
-        className="fixed bottom-10 right-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        សួរគ្រូ Weteka
-      </button>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <div className="flex flex-col justify-between w-full h-full">
-          <div className="mb-4 border-b pb-4">
-            <h2 className="text-2xl font-bold mb-2">សួស្តី, Vuthy!</h2>
-            <p className="text-gray-600">
-              ខ្ញុំជាគ្រូជំនួយនៅលើ វេទេកា​! អ្នកអាចសួរសំណួរដែលអ្នកចង់រៀនមកខ្ញុំ។
-            </p>
-          </div>
+    <div className="min-h-screen bg-gray-50 relative">
+      <EnvDebug />
+      {/* Paper texture background */}
+      <div className="absolute inset-0" style={{
+        backgroundImage: `
+          radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0),
+          linear-gradient(0deg, transparent 24%, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.05) 26%, transparent 27%, transparent 74%, rgba(0,0,0,0.05) 75%, rgba(0,0,0,0.05) 76%, transparent 77%)
+        `,
+        backgroundSize: '20px 20px'
+      }}></div>
 
-          {/* <div className="text-gray-500">
-            <p className="mb-4">Example Questions</p>
-            <div className="flex gap-2 flex-col">
-              <p className=" py-2 px-4 border rounded-lg w-fit">
-                Teach me math!
-              </p>
-              <p className=" py-2 px-4 border rounded-lg w-fit">
-                How to learn video editing?
-              </p>
-              <p className=" py-2 px-4 border rounded-lg w-fit">
-                How to be Batman
-              </p>
+      {/* Main Content */}
+      <div className="relative flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* Simple branding header for chat page */}
+        {conversation.length > 0 && (
+          <div className="bg-white border-b border-gray-100">
+            <div className="max-w-3xl mx-auto px-2 sm:px-6 py-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center">
+                  <Image
+                    src="/weteka-logo.png"
+                    width={16}
+                    height={16}
+                    alt="weteka-logo"
+                    className="w-4 h-4 invert"
+                  />
+                </div>
+                <span className="text-sm font-semibold text-gray-800">Weteka AI</span>
+              </div>
             </div>
-          </div> */}
+          </div>
+        )}
 
-          <div className="flex-grow overflow-y-auto mb-4 space-y-4">
-            {conversation.map((message, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg flex 
-                   ${
-                     message.role === "user"
-                       ? "" //ml-auto
-                       : "bg-gray-100"
-                   } 
-                w-[96%] md:max-w-[80%] whitespace-pre-wrap break-words`}
-              >
-                <div className="text-sm font-semibold mb-1">
-                  {message.role === "user" ? (
-                    <div className="flex flex-row items-center gap-2">
-                      {" "}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="26"
-                        height="26"
-                        fill="currentColor"
-                        className="bi bi-person-circle mr-4"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <path
-                          fill-rule="evenodd"
-                          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                        />
-                      </svg>
-                      {/* <p className="">You</p> */}
-                    </div>
-                  ) : (
-                    <div className="mr-2 w-10 h-10">
+        {/* Welcome message when no conversation */}
+        {conversation.length === 0 && (
+          <WelcomeScreen onSelectPrompt={setInputValue} />
+        )}
+
+        {/* Chat Messages */}
+        {conversation.length > 0 && (
+          <div className="flex-1 overflow-y-auto px-2 sm:px-6 py-4 sm:py-8">
+            <div className="max-w-3xl mx-auto space-y-4 sm:space-y-8">
+              {conversation.map((message, index) => (
+                <ChatMessageComponent
+                  key={index}
+                  message={message}
+                  index={index}
+                  isEditing={editingMessageIndex === index}
+                  editedContent={editedContent}
+                  onStartEditing={startEditing}
+                  onSaveEdit={handleSaveEditedMessage}
+                  onCancelEdit={cancelEditing}
+                  onContentChange={setEditedContent}
+                  onCopy={copyToClipboard}
+                  onShare={shareToMessenger}
+                />
+              ))}
+              
+              {/* Loading Animation */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="flex items-start space-x-2 sm:space-x-3 w-full">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full overflow-hidden shadow-sm flex items-center justify-center">
                       <Image
                         src="/weteka-logo.png"
-                        width={1000}
-                        height={1000}
+                        width={20}
+                        height={20}
                         alt="weteka-logo"
-                        className="w-8 h-8"
+                        className="w-5 h-5"
                       />
                     </div>
-                  )}
+                    <div className="flex flex-col space-y-1">
+                      <div className="text-xs text-gray-500 px-1">Weteka AI</div>
+                      <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl shadow-sm">
+                        <div className="flex items-center space-x-2">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          </div>
+                          <span className="text-sm text-gray-500">Thinking...</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p className="leading-relaxed text-gray-800">
-                  {message.content}
-                </p>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex items-center justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-              </div>
-            )}
+              )}
+              
+              {/* Invisible element to anchor scrolling */}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
+        )}
 
-          <div className="bg-blue-100 mb-6 p-4 rounded-lg">
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center space-x-2"
-            >
-              <input
-                type="text"
-                className="flex-grow p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ask a question..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                disabled={isLoading}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  className="bi bi-send-fill"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z" />
-                </svg>
-              </button>
-            </form>
-          </div>
-        </div>
-      </Modal>
+        <ChatInput
+          inputValue={inputValue}
+          isLoading={isLoading}
+          onInputChange={setInputValue}
+          onSubmit={handleSubmit}
+        />
+
+        {/* Help Menu */}
+        <HelpMenu />
+      </div>
     </div>
   );
 };
