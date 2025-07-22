@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Weteka AI ជំនួយការ
 
-## Getting Started
+**Weteka AI Teacher** - ជំនួយការអប់រំ និងកិច្ចការរដ្ឋបាលដ៏ទូលំទូលាយសម្រាប់កម្ពុជា
 
-First, run the development server:
+## អំពី Weteka AI
 
+Weteka AI ជំនួយការ គឺជាប្រព័ន្ធ AI ដែលបានរចនាឡើងពិសេសសម្រាប់អ្នកប្រើប្រាស់ខ្មែរ។ វាអាចជួយអ្នកក្នុងការ៖
+
+### 🎓 ការអប់រំ
+- ពន្យល់មុខវិជ្ជាគ្រប់ប្រភេទ (គណិតវិទ្យា វិទ្យាសាស្រ្ត ភាសា ប្រវត្តិសាស្រ្ត)
+- ដោះស្រាយលំហាត់ និងបញ្ហាសិក្សា
+- បង្រៀនគំនិតស្មុគស្មាញឱ្យងាយយល់
+
+### 📝 ការសរសេរឯកសារ
+- សំបុត្រផ្លូវការ និងសំណើរស្នើសុំ
+- របាយការណ៍ប្រចាំខែ និងឯកសារអាជីវកម្ម
+- ការបកប្រែ និងកែតម្រូវឯកសារ
+
+### 💼 កិច្ចការរដ្ឋបាល
+- ឯកសារច្បាប់ និងសំណើរស្នើសុំ
+- បទបង្ហាញ និងសម្ភារបណ្តុះបណ្តាល
+- ការណែនាំវិជ្ជាជីវៈ
+
+### 🔧 បច្ចេកទេស
+- ការសរសេរកម្មវិធី និងការអភិវឌ្ឍន៍
+- ការដោះស្រាយបញ្ហាបច្ចេកទេស
+- ការរចនាគេហទំព័រ និងកម្មវិធី
+
+## ការប្រើប្រាស់
+
+1. **ស្តារកម្មវិធី**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **កំណត់ API Key**
+បង្កើតឯកសារ `.env.local` និងបន្ថែម៖
+```
+NEXT_PUBLIC_API_KEY=your_anthropic_api_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **ចាប់ផ្តើមប្រើប្រាស់**
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+បើកលទ្ធ [http://localhost:3000](http://localhost:3000) ដើម្បីចាប់ផ្តើម
 
-## Learn More
+## លក្ខណៈពិសេស
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **ភាសាខ្មែរជាចម្បង** - យល់ដឹង និងឆ្លើយតបជាភាសាខ្មែរ
+- **វប្បធម៌កម្ពុជា** - យល់ដឹងអំពីបរិបទ និងទំនៀមទំលាប់កម្ពុជា
+- **ចម្លើយលម្អិត** - ផ្តល់ការពន្យល់ច្បាស់លាស់ និងឧទាហរណ៍
+- **ងាយស្រួលប្រើ** - រចនាសម្រាប់អ្នកប្រើទាំងអស់
